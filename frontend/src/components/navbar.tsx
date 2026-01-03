@@ -13,7 +13,7 @@ const Navbar = () => {
             </div>
         </div>
         <div className="flex justify-center items-center gap-6">
-            <div className="flex justify-center items-center gap-1 text-xl bg-green-800 px-4 py-1 rounded-[10px] text-white hover:bg-green-700 transition-colors duration-150 cursor-pointer">
+            <div className="flex justify-center items-center gap-1 text-xl bg-green-700 px-4 py-1 rounded-[10px] text-white hover:bg-green-700 transition-colors duration-150 cursor-pointer">
                 <LogIn className="text-yellow-400 font-extrabold"/>LogIn
             </div>
             <div className="bg-blue-900 px-4 py-2 rounded-[10px] text-white font-bold animate-pulse cursor-default">

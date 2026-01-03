@@ -1,5 +1,5 @@
 import Footer from "./footer"
-import Homepage from "./homepage"
+import Homepage from "../pages/homepage"
 import Navbar from "./navbar"
 
 const Landing = () => {

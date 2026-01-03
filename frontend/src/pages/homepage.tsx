@@ -1,19 +1,5 @@
 import { Badge, Book, Check, FastForward, Medal, NotebookPen, School, Star, TrendingUp, Users, type LucideIcon } from "lucide-react"
-
-interface feature  {
-    icon : LucideIcon;
-    iconBg: string;
-    borderColor: string;
-    heading: string;
-    content: string;
-}
-
-interface work {
-    id: number;
-    heading: string;
-    bgColor: string;
-    content: string;
-}
+import type { feature, work } from "../types/models"
 
 const Homepage = () => {
 

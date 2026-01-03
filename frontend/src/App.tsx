@@ -1,10 +1,9 @@
 import { Route, Routes } from "react-router-dom"
-import Mainlayout from "./components/mainlayout"
-import Homepage from "./pages/homepage"
-import Login from "./components/login"
+import Login from "./pages/login"
 import Landing from "./components/landing"
-import Register from "./components/register"
-import Dashboard from "./pages/Dashboard"
+import Register from "./pages/register"
+import Dashboard from "./pages/dashboard"
+import Mainlayout from "./pages/mainlayout"
 
 const App = () => {
   return (

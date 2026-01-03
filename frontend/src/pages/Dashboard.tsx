@@ -1,13 +1,11 @@
 import { AppWindow, School } from 'lucide-react'
 import { useState } from 'react'
-import Resume from './resume'
-import Job from './job'
-
-type Mode = "resume" | "job"
+import Resume from '../components/resume'
+import Job from '../components/job'
 
 const Dashboard = () => {
 
-  const [mode, setMode] = useState<Mode>("resume")
+  const [mode, setMode] = useState<"resume" | "job">("resume")
 
   return (
     <div className='flex flex-col items-center w-full'>

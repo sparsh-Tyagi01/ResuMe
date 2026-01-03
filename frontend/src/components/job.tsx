@@ -1,7 +1,9 @@
 
 const Job = () => {
   return (
-    <div>Job</div>
+    <div className="space-y-6 w-[80vw] mt-10">
+
+    </div>
   )
 }
 

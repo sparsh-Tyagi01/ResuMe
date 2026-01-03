@@ -39,7 +39,21 @@ export interface experience {
 }
 
 export interface education {
-    degree: String,
-    institution: String,
-    year: String
+    degree: String;
+    institution: String;
+    year: String;
+}
+
+export interface job {
+  _id: string;
+  userId: string;
+  jobTitle: string;
+  company: string;
+  location: string;
+  jobLink: string;
+  status: 'Apply' | 'Applied' | 'Interview' | 'Rejected' | 'Selected';
+  resumeId: string;
+  note: string;
+  createdAt: string;
+  updatedAt: string;
 }

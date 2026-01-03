@@ -4,6 +4,7 @@ import Homepage from "./pages/homepage"
 import Login from "./components/login"
 import Landing from "./components/landing"
 import Register from "./components/register"
+import Dashboard from "./pages/Dashboard"
 
 const App = () => {
   return (
@@ -11,9 +12,9 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
-        <Route path="/" element={<Landing/>}/>
+        <Route path="/home" element={<Landing/>}/>
         <Route element={<Mainlayout/>}>
-          <Route path="/home" element={<Homepage/>}/>
+          <Route path="/" element={<Dashboard/>}/>
         </Route>
       </Routes>
     </div>

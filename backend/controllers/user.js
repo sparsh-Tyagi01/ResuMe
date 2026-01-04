@@ -30,7 +30,7 @@ async function userRegister(req,res) {
         payload.role = "admin"
     }
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
-    return res.status(200).json({"message": "Register Successful!", token})
+    return res.status(200).json({"message": "Register Successful!", token, data})
 }
 
 async function userLogin(req,res) {
@@ -48,8 +48,8 @@ async function userLogin(req,res) {
     if(email === process.env.ADMIN_EMAIL){
         payload.role = "admin"
     }
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
-    return res.status(200).json({"message": "Login successful", token})
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
+    return res.status(200).json({"message": "Login successful", token, data})
 }
 
 module.exports = {userRegister, userLogin}

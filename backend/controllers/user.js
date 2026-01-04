@@ -2,54 +2,122 @@ const {User} = require("../models/user")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const dotenv = require("dotenv")
+const transporter = require("../config/mailer")
 
 dotenv.config()
 
-async function userRegister(req,res) {
-    const {name,email,phone,password} = req.body
-    const existingEmail = await User.findOne({email})
-    if(existingEmail){
-        return res.status(404).json({"message": "Email already register"})
+const generateOTP = ()=>Math.floor(100000 + Math.random() * 900000).toString()
+
+async function userRegister(req, res) {
+  try {
+    const { name, email, phone, password } = req.body;
+
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
-    const existingPhone = await User.findOne({phone})
-    if(existingPhone){
-        return res.status(404).json({"message": "Phone no. already register"})
+
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return res.status(409).json({ message: "Email already registered" });
     }
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const data = await User.create({
-        name,
-        email,
-        phone,
-        password: hashedPassword,
-    })
-    let payload = {
-        id: data._id,
-        email: data.email
+
+    const existingPhone = await User.findOne({ phone });
+    if (existingPhone) {
+      return res.status(409).json({ message: "Phone already registered" });
     }
-    if(email === process.env.ADMIN_EMAIL){
-        payload.role = "admin"
-    }
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
-    return res.status(200).json({"message": "Register Successful!", token, data})
+
+    const otp = generateOTP();
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    const user = await User.create({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+      otp: hashedOtp,
+      otpExpires,
+    });
+
+    await transporter.sendMail({
+      from: `"Smart Resume AI" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
+    });
+
+    return res.status(200).json({ message: "OTP sent successfully" });
+
+  } catch (error) {
+    console.error("Register Error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
 }
+
+
+async function verifyOtpHandler(req, res) {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ message: "Email and OTP required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user || !user.otp || user.otpExpires < new Date()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    const isOtpValid = await bcrypt.compare(otp, user.otp);
+    if (!isOtpValid) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    user.otp = null;
+    user.otpExpires = null;
+    await user.save();
+
+    const payload = {
+      id: user._id,
+      email: user.email,
+      role: email === process.env.ADMIN_EMAIL ? "admin" : "user",
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    return res.status(200).json({
+      message: "Registration successful",
+      token,
+      payload,
+    });
+
+  } catch (error) {
+    console.error("OTP Verify Error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
 
 async function userLogin(req,res) {
     const {email, password} = req.body
-    const data = await User.findOne({email})
-    if(!data) return res.status(400).json({"message": "Invalid Email address"});
-    const isMatch = await bcrypt.compare(password,data.password)
+    const user = await User.findOne({email})
+    if(!user) return res.status(400).json({"message": "Invalid Email address"});
+    const isMatch = await bcrypt.compare(password,user.password)
     if(!isMatch){
         return res.status(400).json({"message": "Invalid password"})
     }
-    let payload = {
-        id: data._id,
-        email: data.email
-    }
-    if(email === process.env.ADMIN_EMAIL){
-        payload.role = "admin"
+    const payload = {
+      id: user._id,
+      email: user.email,
+      role: email === process.env.ADMIN_EMAIL ? "admin" : "user",
     }
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
-    return res.status(200).json({"message": "Login successful", token, data})
+    return res.status(200).json({"message": "Login successful", token, payload})
 }
 
-module.exports = {userRegister, userLogin}
+module.exports = {userRegister, userLogin, verifyOtpHandler}

@@ -1,7 +1,8 @@
 const express = require("express")
 const router = express.Router()
 const {createTemplate, getTemplates, getTemplatesById, deleteTemplate, updateTemplate} = require("../controllers/template")
-const {verifyToken, adminOnly} = require("../middlewares/auth")
+const {verifyToken, adminOnly} = require("../middlewares/auth");
+const { upload } = require("../middlewares/multer");
 
 const multiUpload = upload.fields([
     { name: "image", maxCount: 1 },

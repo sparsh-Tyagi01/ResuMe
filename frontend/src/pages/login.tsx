@@ -1,11 +1,15 @@
 import { ArrowLeft, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+      localStorage.clear();
+    }, []);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");

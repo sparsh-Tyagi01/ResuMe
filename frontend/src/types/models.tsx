@@ -57,3 +57,13 @@ export interface job {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface template {
+  _id: string;
+  name: string;
+  previewUrl: string;
+  htmlUrl: string;
+  fields: string[];
+  createdAt: string;
+  updatedAt: string;
+}

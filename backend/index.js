@@ -22,8 +22,8 @@ app.use(cors({
 app.use(bodyparser.json())
 
 app.use('/api/auth', userRoutes)
-app.use('api/resume', resumeRoutes)
-app.use('api/template', templateRoutes)
-app.use('api/job', jobRoutes)
+app.use('/api/resume', resumeRoutes)
+app.use('/api/template', templateRoutes)
+app.use('/api/job', jobRoutes)
 
 app.listen(process.env.PORT, ()=>console.log(`Server started at PORT: ${process.env.PORT}`))

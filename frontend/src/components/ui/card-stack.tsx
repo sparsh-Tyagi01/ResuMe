@@ -20,51 +20,27 @@ export type CardStackItem = {
 
 export type CardStackProps<T extends CardStackItem> = {
   items: T[];
-
-  /** Selected index on mount */
   initialIndex?: number;
-
-  /** How many cards are visible around the active (odd recommended) */
   maxVisible?: number;
-
-  /** Card sizing */
   cardWidth?: number;
   cardHeight?: number;
-
-  /** How much cards overlap each other (0..0.8). Higher = more overlap */
   overlap?: number;
-
-  /** Total fan angle (deg). Higher = wider arc */
   spreadDeg?: number;
-
-  /** 3D / depth feel */
   perspectivePx?: number;
   depthPx?: number;
   tiltXDeg?: number;
-
-  /** Active emphasis */
   activeLiftPx?: number;
   activeScale?: number;
   inactiveScale?: number;
-
-  /** Motion */
   springStiffness?: number;
   springDamping?: number;
-
-  /** Behavior */
   loop?: boolean;
   autoAdvance?: boolean;
   intervalMs?: number;
   pauseOnHover?: boolean;
-
-  /** UI */
   showDots?: boolean;
   className?: string;
-
-  /** Hooks */
   onChangeIndex?: (index: number, item: T) => void;
-
-  /** Custom renderer (optional) */
   renderCard?: (item: T, state: { active: boolean }) => React.ReactNode;
 };
 
@@ -73,12 +49,10 @@ function wrapIndex(n: number, len: number) {
   return ((n % len) + len) % len;
 }
 
-/** Minimal signed offset from active index to i, with wrapping (for loop behavior). */
 function signedOffset(i: number, active: number, len: number, loop: boolean) {
   const raw = i - active;
   if (!loop || len <= 1) return raw;
 
-  // consider wrapped alternative
   const alt = raw > 0 ? raw - len : raw + len;
   return Math.abs(alt) < Math.abs(raw) ? alt : raw;
 }
@@ -87,44 +61,33 @@ export function CardStack<T extends CardStackItem>({
   items,
   initialIndex = 0,
   maxVisible = 7,
-
   cardWidth = 300,
   cardHeight = 400,
-
   overlap = 0.45,
   spreadDeg = 30,
-
   perspectivePx = 1100,
   depthPx = 100,
   tiltXDeg = 8,
-
   activeLiftPx = 20,
   activeScale = 1.02,
   inactiveScale = 0.94,
-
   springStiffness = 280,
   springDamping = 28,
-
   loop = true,
   autoAdvance = false,
   intervalMs = 2800,
   pauseOnHover = true,
-
   showDots = true,
   className,
-
   onChangeIndex,
   renderCard,
 }: CardStackProps<T>) {
   const reduceMotion = useReducedMotion();
   const len = items.length;
 
-  const [active, setActive] = React.useState(() =>
-    wrapIndex(initialIndex, len),
-  );
+  const [active, setActive] = React.useState(() => wrapIndex(initialIndex, len));
   const [hovering, setHovering] = React.useState(false);
 
-  // keep active in bounds if items change
   React.useEffect(() => {
     setActive((a) => wrapIndex(a, len));
   }, [len]);
@@ -132,11 +95,9 @@ export function CardStack<T extends CardStackItem>({
   React.useEffect(() => {
     if (!len) return;
     onChangeIndex?.(active, items[active]!);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active]);
 
   const maxOffset = Math.max(0, Math.floor(maxVisible / 2));
-
   const cardSpacing = Math.max(10, Math.round(cardWidth * (1 - overlap)));
   const stepDeg = maxOffset > 0 ? spreadDeg / maxOffset : 0;
 
@@ -155,13 +116,11 @@ export function CardStack<T extends CardStackItem>({
     setActive((a) => wrapIndex(a + 1, len));
   }, [canGoNext, len]);
 
-  // keyboard navigation (when container focused)
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowLeft") prev();
     if (e.key === "ArrowRight") next();
   };
 
-  // autoplay
   React.useEffect(() => {
     if (!autoAdvance) return;
     if (reduceMotion) return;
@@ -198,14 +157,12 @@ export function CardStack<T extends CardStackItem>({
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
-      {/* Stage */}
       <div
         className="relative w-full"
         style={{ height: Math.max(380, cardHeight + 80) }}
         tabIndex={0}
         onKeyDown={onKeyDown}
       >
-        {/* background wash / spotlight */}
         <div
           className="pointer-events-none absolute inset-x-0 top-6 mx-auto h-48 w-[70%] rounded-full bg-black/5 blur-3xl dark:bg-white/5"
           aria-hidden="true"
@@ -227,25 +184,20 @@ export function CardStack<T extends CardStackItem>({
               const abs = Math.abs(off);
               const visible = abs <= maxOffset;
 
-              // hide far-away cards cleanly
               if (!visible) return null;
 
-              // fan geometry
               const rotateZ = off * stepDeg;
               const x = off * cardSpacing;
-              const y = abs * 10; // subtle arc-down feel
+              const y = abs * 10;
               const z = -abs * depthPx;
 
               const isActive = off === 0;
 
               const scale = isActive ? activeScale : inactiveScale;
               const lift = isActive ? -activeLiftPx : 0;
-
               const rotateX = isActive ? 0 : tiltXDeg;
-
               const zIndex = 100 - abs;
 
-              // drag only on the active card
               const dragProps = isActive
                 ? {
                     drag: "x" as const,
@@ -260,7 +212,6 @@ export function CardStack<T extends CardStackItem>({
                       const v = info.velocity.x;
                       const threshold = Math.min(160, cardWidth * 0.22);
 
-                      // swipe logic
                       if (travel > threshold || v > 650) prev();
                       else if (travel < -threshold || v < -650) next();
                     },
@@ -331,7 +282,6 @@ export function CardStack<T extends CardStackItem>({
         </div>
       </div>
 
-      {/* Dots navigation centered at bottom */}
       {showDots ? (
         <div className="mt-6 flex items-center justify-center gap-3">
           <div className="flex items-center gap-2">
@@ -344,7 +294,7 @@ export function CardStack<T extends CardStackItem>({
                   className={cn(
                     "h-2 w-2 rounded-full transition cursor-pointer",
                     on
-                      ? "bg-blue-500"
+                      ? "bg-blue-50"
                       : "bg-slate-700 hover:bg-slate-600",
                   )}
                   aria-label={`Go to ${it.title}`}

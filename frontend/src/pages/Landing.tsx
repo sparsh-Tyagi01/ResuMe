@@ -111,7 +111,6 @@ const Landing = () => {
           }
         }
       }, 100);
-      // Clear state after scrolling
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location, navigate]);
@@ -147,15 +146,12 @@ const Landing = () => {
       <Navbar />
 
       <FlowArt>
-        {/* Section 1: Hero */}
         <FlowSection id="hero" className="bg-[#f3f6fc] text-slate-900 flex flex-col justify-between">
-          {/* Top Info */}
           <div className="flex justify-between items-center text-[10px] md:text-xs font-bold tracking-widest text-blue-600 uppercase">
             <span>01 / INTRODUCTION</span>
             <span>RESUME BUILDER</span>
           </div>
 
-          {/* Center Content */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto">
             <div className="lg:col-span-7 space-y-6 text-left">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-950 tracking-tight leading-[1.05]">
@@ -217,22 +213,18 @@ const Landing = () => {
             </div>
           </div>
 
-          {/* Bottom Info */}
           <div className="border-t border-slate-200/60 pt-4 flex justify-between items-center text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">
             <span>scroll to explore</span>
             <span>real-time live previews</span>
           </div>
         </FlowSection>
 
-        {/* Section 2: Templates (Card Stack) */}
         <FlowSection id="templates" className="bg-[#0b0f19] text-white flex flex-col justify-between">
-          {/* Top Info */}
           <div className="flex justify-between items-center text-[10px] md:text-xs font-bold tracking-widest text-indigo-400 uppercase">
             <span>02 / TEMPLATES</span>
             <span>4 PROFESSIONAL FORMATS</span>
           </div>
 
-          {/* Center Content */}
           <div className="my-auto flex flex-col md:flex-row items-center justify-between gap-8 w-full max-w-6xl mx-auto py-4">
             <div className="text-left max-w-md shrink-0 space-y-4">
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
@@ -255,7 +247,6 @@ const Landing = () => {
               </div>
             </div>
 
-            {/* Templates Card Stack */}
             <div className="flex-1 w-full max-w-md flex justify-center items-center">
               <CardStack
                 items={templatesItems}
@@ -264,13 +255,11 @@ const Landing = () => {
                 showDots={true}
                 renderCard={(item, state) => (
                   <div className="relative w-full h-full bg-slate-900 border-2 border-slate-800 rounded-xl p-4 flex flex-col justify-between overflow-hidden">
-                    {/* Visual Preview Container */}
                     <div className="relative flex-1 rounded-lg overflow-hidden bg-white border border-slate-800 mb-3 shadow-inner">
                       <div className="absolute inset-0 scale-[0.22] origin-top-left p-3 w-[794px] h-[1123px] select-none pointer-events-none text-slate-900">
                         <LayoutRenderer templateId={item.id.toString()} data={sampleData} />
                       </div>
                       
-                      {/* Overlay button on active card */}
                       {state.active && (
                         <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-3">
                           <button
@@ -286,7 +275,6 @@ const Landing = () => {
                       )}
                     </div>
 
-                    {/* Text Details */}
                     <div className="flex items-center justify-between gap-4">
                       <div className="text-left min-w-0">
                         <h4 className="text-xs font-bold text-white mb-0.5 truncate">{item.title}</h4>
@@ -311,33 +299,28 @@ const Landing = () => {
             </div>
           </div>
 
-          {/* Bottom Info */}
           <div className="border-t border-slate-800/80 pt-4 flex justify-between items-center text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest">
             <span>ats parser optimized</span>
             <span>vector-clean print layout</span>
           </div>
         </FlowSection>
 
-        {/* Section 3: Features */}
         <FlowSection id="features" className="bg-[#fcfbf9] text-slate-900 flex flex-col justify-between">
-          {/* Top Info */}
           <div className="flex justify-between items-center text-[10px] md:text-xs font-bold tracking-widest text-amber-600 uppercase">
             <span>03 / POWERFUL FEATURES</span>
             <span>DESIGNED FOR SPEED</span>
           </div>
 
-          {/* Center Content */}
           <div className="my-auto space-y-10">
             <div className="text-left max-w-xl">
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-slate-950 leading-tight">
                 A Frictionless Editor
               </h2>
-              <p className="text-xs md:text-sm text-slate-500 font-medium leading-relaxed mt-2">
+              <p className="text-xs md:text-sm text-slate-505 font-medium leading-relaxed mt-2">
                 No complicated configuration. ResuMe gives you everything you need to build, style, and download your resume instantly.
               </p>
             </div>
 
-            {/* Feature cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white border border-slate-200/70 p-6 rounded-2xl flex flex-col items-start gap-3 hover:shadow-lg transition-shadow">
                 <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
@@ -381,22 +364,18 @@ const Landing = () => {
             </div>
           </div>
 
-          {/* Bottom Info */}
           <div className="border-t border-slate-200/60 pt-4 flex justify-between items-center text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">
             <span>built-in cloud sync</span>
             <span>zero layout friction</span>
           </div>
         </FlowSection>
 
-        {/* Section 4: How It Works */}
         <FlowSection id="how-it-works" className="bg-[#111926] text-white flex flex-col justify-between">
-          {/* Top Info */}
           <div className="flex justify-between items-center text-[10px] md:text-xs font-bold tracking-widest text-emerald-400 uppercase">
             <span>04 / THE SYSTEM</span>
             <span>SIMPLE WORKFLOW</span>
           </div>
 
-          {/* Center Content */}
           <div className="my-auto space-y-10">
             <div className="text-left max-w-xl">
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
@@ -407,7 +386,6 @@ const Landing = () => {
               </p>
             </div>
 
-            {/* Workflow Steps */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-slate-900/40 border border-slate-800 p-8 rounded-2xl text-left relative">
                 <div className="absolute top-4 right-6 text-5xl font-black text-slate-800/60 select-none">01</div>
@@ -444,22 +422,18 @@ const Landing = () => {
             </div>
           </div>
 
-          {/* Bottom Info */}
           <div className="border-t border-slate-800/80 pt-4 flex justify-between items-center text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest">
             <span>browser based layout</span>
             <span>no subscriptions required</span>
           </div>
         </FlowSection>
 
-        {/* Section 5: CTA */}
         <FlowSection id="cta" className="bg-[#070a13] text-slate-300 flex flex-col justify-between">
-          {/* Top Info */}
           <div className="flex justify-between items-center text-[10px] md:text-xs font-bold tracking-widest text-blue-400 uppercase">
             <span>05 / GET STARTED</span>
             <span>JOIN RESUME</span>
           </div>
 
-          {/* Center Content */}
           <div className="my-auto text-center max-w-2xl mx-auto space-y-6">
             <h2 className="text-4xl md:text-6xl font-black tracking-tight text-white leading-tight">
               Ready to Build Your Resume?
@@ -478,7 +452,6 @@ const Landing = () => {
             </div>
           </div>
 
-          {/* Bottom Info */}
           <div className="border-t border-slate-800/80 pt-4 flex justify-between items-center text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-widest">
             <span>secure database backup</span>
             <span>completely customizable templates</span>

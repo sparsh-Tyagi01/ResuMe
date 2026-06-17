@@ -169,10 +169,10 @@ export const ResumeProvider = ({ children }: { children: ReactNode }) => {
         }
         return true;
       }
-      return false;
+      throw new Error("Failed to delete resume");
     } catch (err) {
       console.error("Failed to delete resume:", err);
-      return false;
+      throw err;
     }
   }, [token]);
 

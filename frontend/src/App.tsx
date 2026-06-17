@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Templates from "./pages/Templates";
 import Builder from "./pages/Builder";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/builder/:id" element={<Builder />} />
         </Route>
       </Routes>
+      <Toaster />
     </div>
   );
 };

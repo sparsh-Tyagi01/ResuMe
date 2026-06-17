@@ -48,18 +48,55 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteResume = async (e: React.MouseEvent, id: string) => {
+  const handleDeleteResume = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (!window.confirm("Are you sure you want to delete this resume?")) return;
-
-    try {
-      await deleteResume(id);
-      setResumes((prev) => prev.filter((r) => r._id !== id));
-      toast.success("Resume deleted");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to delete resume");
-    }
+    
+    toast((t) => (
+      <div className="flex flex-col gap-2.5 p-1 text-left font-sans">
+        <p className="text-xs font-bold text-slate-800 leading-normal">
+          Are you sure you want to delete this resume?
+        </p>
+        <p className="text-[10px] text-slate-400 font-medium -mt-1.5">
+          This action cannot be undone.
+        </p>
+        <div className="flex justify-end gap-2 mt-1">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] rounded-lg transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              const loadId = toast.loading("Deleting resume...");
+              try {
+                await deleteResume(id);
+                setResumes((prev) => prev.filter((r) => r._id !== id));
+                toast.success("Resume deleted successfully!", { id: loadId });
+              } catch (err) {
+                console.error(err);
+                toast.error("Failed to delete resume.", { id: loadId });
+              }
+            }}
+            className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-[10px] rounded-lg transition-colors cursor-pointer shadow-sm shadow-rose-500/10"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: 5000,
+      position: "top-center",
+      style: {
+        borderRadius: "16px",
+        background: "#FFF",
+        color: "#333",
+        boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        border: "1px solid #E2E8F0",
+        maxWidth: "280px"
+      }
+    });
   };
 
   const handleDuplicateResume = async (e: React.MouseEvent, id: string) => {

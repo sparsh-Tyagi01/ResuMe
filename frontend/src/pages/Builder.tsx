@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useResume } from "../context/ResumeContext";
 import LayoutRenderer from "../components/templates/LayoutRenderer";
-import { axiosInstance } from "../lib/axios";
 import {
   Sparkles,
   ChevronDown,
@@ -10,7 +9,6 @@ import {
   Plus,
   Trash2,
   ChevronLeft,
-  Save,
   Printer,
   Sliders,
   Award,
@@ -21,12 +19,11 @@ import {
   Hammer,
   User,
 } from "lucide-react";
-import toast from "react-hot-toast";
 
 const Builder = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { activeResume, loadResume, createResume, updateResumeData, saveResume, loading, saving } = useResume();
+  const { activeResume, loadResume, createResume, updateResumeData, loading } = useResume();
 
   const [activeSection, setActiveSection] = useState<string>("personal");
   const [zoom, setZoom] = useState<number>(0.75);
@@ -320,13 +317,7 @@ const Builder = () => {
             />
           )}
 
-          <button
-            onClick={saveResume}
-            disabled={saving}
-            className="px-4 py-2 border border-slate-300 hover:border-slate-400 bg-white text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs"
-          >
-            <Save size={14} /> {saving ? "Saving..." : "Save Now"}
-          </button>
+
           <button
             onClick={handlePrint}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 cursor-pointer shadow-md shadow-blue-500/10"

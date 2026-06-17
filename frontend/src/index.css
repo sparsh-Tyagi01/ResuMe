@@ -113,8 +113,7 @@ button:focus-visible {
 
   #root, 
   div.h-screen, 
-  div.overflow-hidden,
-  div.flex {
+  div.overflow-hidden {
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;

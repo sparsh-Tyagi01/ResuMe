@@ -1,0 +1,125 @@
+<USER_REQUEST>
+now listen carefully, i am sharing you a prompt of some other website design. You have to complete change my website landing page according to this new design. Do not make the content like this prompt. Take content according to this project. Design should be very clean and professional. It should not be messy.
+
+Completely change the landing page properly.
+
+So the prompt is:
+
+You are given a task to integrate an existing React component in the codebase
+
+The codebase should support:
+- shadcn project structure  
+- Tailwind CSS
+- Typescript
+
+If it doesn't, provide instructions on how to setup project via shadcn CLI, install Tailwind or Typescript.
+
+Determine the default path for components and styles. 
+If default path for components is not /components/ui, provide instructions on why it's important to create this folder
+Copy-paste this component to /components/ui folder:
+```tsx
+story-scroll.tsx
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(ScrollTrigger);
+
+function cx(...parts: Array<string | undefined | false | null>): string {
+  return parts.filter(Boolean).join(' ');
+}
+
+export interface FlowSectionProps {
+  className?: string;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+  'aria-label'?: string;
+}
+
+export const FlowSection: React.FC<FlowSectionProps> = ({
+  className,
+  style = {},
+  children,
+  'aria-label': ariaLabel,
+}) => (
+  <section
+    data-flow-section
+    aria-label={ariaLabel}
+    className={cx('relative min-h-screen w-full overflow-hidden', className)}
+  >
+    <div
+      data-flow-inner
+      className={cx(
+        'flow-art-container relative flex min-h-screen w-full flex-col justify-between gap-6 px-[4vw] pt-[clamp(2rem,8vw,4vw)] pb-[4vw]',
+        'will-change-transform',
+      )}
+      style={{ transformOrigin: 'bottom left', ...style }}
+    >
+      {children}
+    </div>
+  </section>
+);
+
+export interface
+<truncated 14347 bytes>
+  <hr className="my-[2vw] border-none border-t border-black/60" />
+        <p className="mt-auto max-w-[50ch] text-[clamp(1rem,2.5vw,2rem)] font-normal leading-relaxed">
+          Take control of your creative journey. Join now and let&apos;s shape the future of the art
+          world together.
+        </p>
+      </FlowSection>
+    </FlowArt>
+  );
+}
+
+```
+
+Install NPM dependencies:
+```bash
+gsap, @gsap/react
+```
+
+Extend existing Tailwind 4 index.css with this code (or if project uses Tailwind 3, extend tailwind.config.js or globals.css):
+```css
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+```
+
+Implementation Guidelines
+ 1. Analyze the component structure and identify all required dependencies
+ 2. Review the component's argumens and state
+ 3. Identify any required context providers or hooks and install them
+ 4. Questions to Ask
+ - What data/props will be passed to this component?
+ - Are there any specific state management requirements?
+ - Are there any required assets (images, icons, etc.)?
+ - What is the expected responsive behavior?
+ - What is the best place to use this component in the app?
+
+Steps to integrate
+ 0. Copy paste all the code above in the correct directories
+ 1. Install external dependencies
+ 2. Fill image assets with Unsplash stock images you know exist
+ 3. Use lucide-react icons for svgs or logos if component requires them
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-06-17T22:15:29+05:30.
+
+The user's current state is as follows:
+Active Document: /Users/apple/development/Projects/ResuMe/frontend/src/pages/Builder.tsx (LANGUAGE_TSX)
+Cursor is on line: 5
+Other open documents:
+- /Users/apple/development/Projects/ResuMe/frontend/src/pages/Builder.tsx (LANGUAGE_TSX)
+Running terminal commands:
+- npm run dev (in /Users/apple/development/Projects/ResuMe/backend, running for 1h41m56s)
+- npm run dev (in /Users/apple/development/Projects/ResuMe/frontend, running for 10m12s)
+</ADDITIONAL_METADATA>

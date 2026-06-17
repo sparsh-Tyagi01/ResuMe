@@ -1,47 +1,83 @@
 import type { LucideIcon } from "lucide-react";
 
-export interface feature  {
-    icon : LucideIcon;
-    iconBg: string;
-    borderColor: string;
-    heading: string;
-    content: string;
-}
-
-export interface work {
-    id: number;
-    heading: string;
-    bgColor: string;
-    content: string;
+export interface feature {
+  icon: LucideIcon;
+  iconBg: string;
+  borderColor: string;
+  heading: string;
+  content: string;
 }
 
 export interface resume {
-    _id: string;
-    userId: string;
+  _id?: string;
+  userId?: string;
+  title: string;
+  templateId: string;
+  colorAccent?: string;
+  personalInfo: {
     name: string;
+    title: string;
     email: string;
     phone: string;
-    github?: string;
+    location: string;
     linkedin?: string;
-    skills: string[];
-    experience: experience[];
-    education: education[];
-    resumeUrl: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface experience {
+    github?: string;
+    portfolio?: string;
+  };
+  summary?: string;
+  experience: {
+    id: string;
     company: string;
     role: string;
+    startDate: string;
+    endDate: string;
+    current: boolean;
+    location: string;
+    bullets: string[];
+  }[];
+  education: {
+    id: string;
+    institution: string;
+    degree: string;
+    field: string;
+    startYear: string;
+    endYear: string;
+    gpa?: string;
+    coursework?: string[];
+  }[];
+  skills: {
+    languages: string[];
+    frameworks: string[];
+    tools: string[];
+    other: string[];
+  };
+  projects: {
+    id: string;
+    name: string;
+    techStack: string[];
+    date: string;
+    githubUrl?: string;
+    liveUrl?: string;
+    bullets: string[];
+  }[];
+  certifications?: {
+    id: string;
+    name: string;
+    issuer: string;
+    date: string;
+    url?: string;
+  }[];
+  leadership?: {
+    id: string;
+    role: string;
+    organization: string;
     duration: string;
-    description: string;
-}
-
-export interface education {
-    degree: String;
-    institution: String;
-    year: String;
+    bullets: string[];
+  }[];
+  isPublic?: boolean;
+  shareToken?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface job {
@@ -51,19 +87,9 @@ export interface job {
   company: string;
   location: string;
   jobLink: string;
-  status: 'Apply' | 'Applied' | 'Interview' | 'Rejected' | 'Selected';
-  resumeId: string;
+  status: "Applied" | "Interview" | "Offer" | "Rejected";
+  resumeId?: string | null;
   note: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface template {
-  _id: string;
-  name: string;
-  previewUrl: string;
-  htmlUrl: string;
-  fields: string[];
   createdAt: string;
   updatedAt: string;
 }

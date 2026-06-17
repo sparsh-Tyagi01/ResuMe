@@ -120,4 +120,38 @@ async function userLogin(req,res) {
     return res.status(200).json({"message": "Login successful", token, payload})
 }
 
-module.exports = {userRegister, userLogin, verifyOtpHandler}
+async function resendOtp(req, res) {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const otp = generateOTP();
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    user.otp = hashedOtp;
+    user.otpExpires = otpExpires;
+    await user.save();
+
+    await transporter.sendMail({
+      from: `"Flowtica" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your Flowtica OTP Code",
+      text: `Your new Flowtica verification code is ${otp}. It will expire in 5 minutes.`,
+    });
+
+    return res.status(200).json({ message: "OTP resent successfully" });
+  } catch (error) {
+    console.error("Resend OTP Error:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+}
+
+module.exports = {userRegister, userLogin, verifyOtpHandler, resendOtp}

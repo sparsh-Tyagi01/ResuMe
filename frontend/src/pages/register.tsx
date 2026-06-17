@@ -1,189 +1,193 @@
-import { ArrowLeft, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import { Mail, KeyRound, User, Phone, ArrowRight, Eye, EyeOff } from "lucide-react";
 
 const Register = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    localStorage.clear();
-  }, []);
-
-  const [formData, setFormData] = useState<{
-    name: string;
-    email: string;
-    phone: number | "";
-    password: string;
-  }>({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
-  });
-
-  const [data, setData] = useState("");
-  const [otp, setOtp] = useState("");
-  const [isGenerate, setIsGenerate] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!name || !email || !phone || !password) {
+      toast.error("All fields are required.");
+      return;
+    }
 
+    setIsLoading(true);
     try {
-      setIsGenerate(true)
+      const res = await axiosInstance.post("/auth/register", {
+        name,
+        email,
+        phone,
+        password,
+      });
 
-      if (!data) {
-        const res = await axiosInstance.post("/auth/register", formData);
-        setData(res.data);
-      } else {
-        const res = await axiosInstance.post("/auth/verify-otp", otp);
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("userId", res.data.payload.id);
-        localStorage.setItem("role", res.data.payload.role);
-
-        if (res.status == 200 && res.data.token) {
-          navigate("/home");
-        }
+      if (res.status === 200) {
+        toast.success("Verification OTP code sent to email!");
+        navigate("/verify-otp", { state: { email } });
       }
-    } catch (error) {
-      console.error("Register error: ", error)
-      toast.error("Registeration failed!")
+    } catch (error: any) {
+      console.error("Registration error: ", error);
+      toast.error(error.response?.data?.message || "Registration failed. Please try again.");
     } finally {
-      if (!data) {
-        setIsGenerate(false);
-      }
+      setIsLoading(false);
     }
   }
 
   return (
-    <div className="flex flex-col justify-center items-center gap-2 w-full min-h-screen bg-slate-100">
-      <div
-        className="w-[35vw] flex items-center gap-2 text-black/60 mt-10 cursor-default"
-        onClick={() => navigate("/")}
-      >
-        <ArrowLeft /> Back to Home
-      </div>
-      <div className="w-[35vw] flex flex-col items-center gap-3 bg-white py-6 rounded-2xl shadow-xl mb-10">
-        <div className="bg-gradient-to-br from-blue-800 to-cyan-700 rounded-[10px] p-2 text-white">
-          <User size={40} />
-        </div>
-        <h1 className="text-2xl">Create Account</h1>
-        <p className="text-black/60">Sign up to start building your resume</p>
-        <form
-          onSubmit={handleSubmit}
-          className="w-[30vw] text-black/70 flex flex-col gap-2"
-        >
-          <div>
-            <label htmlFor="name" className="block">
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              placeholder="🙎🏻‍♂️ Enter your name..."
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-[30vw] focus:outline-none border-2 border-black/20 p-1 rounded-[10px]"
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block">
-              Email Address
-            </label>
-            <input
-              type="text"
-              id="email"
-              placeholder="📧 Enter your email..."
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className="w-[30vw] focus:outline-none border-2 border-black/20 p-1 rounded-[10px]"
-            />
-          </div>
-          <div>
-            <label htmlFor="phone" className="block">
-              Phone Number
-            </label>
-            <input
-              type="number"
-              id="phone"
-              placeholder="📞 Enter your phone no..."
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: Number(e.target.value) })
-              }
-              className="w-[30vw] no-spinner focus:outline-none border-2 border-black/20 p-1 rounded-[10px]"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block">
-              Password
-            </label>
-            <input
-              type="text"
-              id="password"
-              placeholder="🔐 Create your password..."
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              className="w-[30vw] focus:outline-none border-2 border-black/20 p-1 rounded-[10px]"
-            />
-          </div>
-          {data && (
-            <div>
-              <label htmlFor="otp" className="block">
-                OTP {"(one-time-password)"}
-              </label>
-              <input
-                type="number"
-                id="otp"
-                placeholder="🕐 Enter one-time-password..."
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="w-[30vw] no-spinner focus:outline-none border-2 border-black/20 p-1 rounded-[10px]"
-              />
-            </div>
-          )}
+    <div className="relative min-h-screen bg-slate-50 flex items-center justify-center font-sans overflow-hidden px-4 py-12">
+      {/* Background patterns */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50/40 via-transparent to-transparent" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-indigo-100/10 rounded-full blur-[120px] pointer-events-none" />
 
-          {isGenerate ? (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-[440px]"
+      >
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/50 text-slate-600 text-xs font-semibold mb-4 pointer-events-none">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
+            Get Started Free
+          </div>
+          <h1 className="text-3xl font-extrabold text-slate-950 tracking-tight">
+            Create Account
+          </h1>
+          <p className="text-slate-500 text-sm mt-2">
+            Build LaTeX-quality resumes with smart AI assistance.
+          </p>
+        </div>
+
+        <div className="bg-white border border-slate-200/60 p-8 rounded-3xl shadow-xl shadow-slate-100/50">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Full Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <User size={16} />
+                </div>
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="John Doe"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-indigo-600 focus:bg-white rounded-xl focus:outline-none transition-all text-slate-900 text-sm font-medium placeholder-slate-400"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Mail size={16} />
+                </div>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="john@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-indigo-600 focus:bg-white rounded-xl focus:outline-none transition-all text-slate-900 text-sm font-medium placeholder-slate-400"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="phone" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Phone Number
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Phone size={16} />
+                </div>
+                <input
+                  type="tel"
+                  id="phone"
+                  placeholder="9876543210"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-indigo-600 focus:bg-white rounded-xl focus:outline-none transition-all text-slate-900 text-sm font-medium placeholder-slate-400"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <KeyRound size={16} />
+                </div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-indigo-600 focus:bg-white rounded-xl focus:outline-none transition-all text-slate-900 text-sm font-medium placeholder-slate-400"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
             <button
-            type="submit"
-            className="w-[30vw] mt-2 bg-gradient-to-r from-green-700 to-emerald-600 rounded-[5px] text-white py-1 hover:from-green-800 hover:to-emerald-700 transition-all duration-200 cursor-pointer"
-          >
-            Generating...
-          </button>
-          ) : (
-            <button
-            type="submit"
-            className="w-[30vw] mt-2 bg-gradient-to-r from-green-700 to-emerald-600 rounded-[5px] text-white py-1 hover:from-green-800 hover:to-emerald-700 transition-all duration-200 cursor-pointer"
-          >
-            {data ? "Create Account" : "Generate OTP"}
-          </button>
-          )}
-        
-        </form>
-        <h2 className="text-black/70">
-          Already have an account?{" "}
-          <span
-            onClick={() => navigate("/login")}
-            className="text-blue-600 font-medium cursor-default"
-          >
-            Log in
-          </span>
-        </h2>
-        <p className="text-center text-xs text-black/50">
-          By creating an account, you agree to our{" "}
-          <span className="text-blue-500 cursor-pointer">Terms of Service</span>{" "}
-          and
-          <br />
-          <span className="text-blue-500 cursor-pointer">Privacy Policy</span>
-        </p>
-      </div>
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-slate-950 hover:bg-slate-900 text-white rounded-xl font-bold text-sm transition-all shadow-md shadow-slate-900/10 cursor-pointer flex items-center justify-center gap-2 mt-2"
+            >
+              {isLoading ? "Creating Account..." : "Create Account"}
+              {!isLoading && <ArrowRight size={16} />}
+            </button>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-slate-500 text-xs">
+              Already have an account?{" "}
+              <button
+                onClick={() => navigate("/login")}
+                className="text-indigo-600 font-bold hover:underline cursor-pointer bg-transparent border-none p-0 inline-block"
+              >
+                Sign in
+              </button>
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => navigate("/")}
+          className="w-full mt-6 py-2.5 text-center text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+        >
+          ← Back to homepage
+        </button>
+      </motion.div>
     </div>
   );
 };

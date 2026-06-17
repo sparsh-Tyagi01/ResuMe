@@ -1,25 +1,33 @@
-import { Route, Routes } from "react-router-dom"
-import Login from "./pages/login"
-import Landing from "./components/landing"
-import Register from "./pages/register"
-import Dashboard from "./pages/dashboard"
-import Mainlayout from "./pages/mainlayout"
-import Templates from "./pages/templates"
+import { Route, Routes } from "react-router-dom";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import VerifyOtp from "./pages/VerifyOtp";
+import Dashboard from "./pages/Dashboard";
+import Templates from "./pages/Templates";
+import Builder from "./pages/Builder";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
     <div>
       <Routes>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/register" element={<Register/>}/>
-        <Route path="/home" element={<Landing/>}/>
-        <Route path="/template" element={<Templates/>}/>
-        <Route element={<Mainlayout/>}>
-          <Route path="/" element={<Dashboard/>}/>
+        {/* Public Routes */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/templates" element={<Templates />} />
+          <Route path="/builder" element={<Builder />} />
+          <Route path="/builder/:id" element={<Builder />} />
         </Route>
       </Routes>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

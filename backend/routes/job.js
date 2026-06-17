@@ -4,9 +4,9 @@ const {verifyToken} = require("../middlewares/auth")
 const {createJob, getMyJob, getJobById, deleteJob, updateJobStatusHandler} = require("../controllers/job")
 
 router.post("/create", verifyToken, createJob)
-router.get("/myjob", verifyToken, getMyJob)
+router.get("/my", verifyToken, getMyJob)
 router.get("/:id", verifyToken, getJobById)
 router.delete("/:id", verifyToken, deleteJob)
-router.put('/:id', updateJobStatusHandler)
+router.put('/:id', verifyToken, updateJobStatusHandler)
 
 module.exports = router

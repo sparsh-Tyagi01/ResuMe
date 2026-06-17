@@ -3,11 +3,12 @@ const dotenv = require("dotenv")
 
 dotenv.config()
 
-function verifyToken(req,res) {
-    const token = req.headers("authorization")
-    if(!token) return res.status(403).send("token required")
+function verifyToken(req, res, next) {
+    const authHeader = req.headers["authorization"]
+    if (!authHeader) return res.status(403).send("token required")
     try {
-        const decode = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET)
+        const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader
+        const decode = jwt.verify(token, process.env.JWT_SECRET)
         req.user = decode
         next()
     } catch (error) {
@@ -15,7 +16,7 @@ function verifyToken(req,res) {
     }
 }
 
-function adminOnly(req,res) {
+function adminOnly(req,res, next) {
     if(!req.user || req.user.role != "admin"){
         return res.status(400).json({message: "Admin access required"})
     }

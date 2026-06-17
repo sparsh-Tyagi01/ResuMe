@@ -91,12 +91,26 @@ const Landing = () => {
 
   useEffect(() => {
     if (location.state?.scrollTo) {
-      const el = document.getElementById(location.state.scrollTo);
-      if (el) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-      }
+      const sectionId = location.state.scrollTo;
+      setTimeout(() => {
+        const sectionIndexes: Record<string, number> = {
+          hero: 0,
+          templates: 1,
+          features: 2,
+          "how-it-works": 3,
+        };
+        if (sectionId in sectionIndexes) {
+          window.scrollTo({
+            top: sectionIndexes[sectionId] * window.innerHeight,
+            behavior: "smooth",
+          });
+        } else {
+          const el = document.getElementById(sectionId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+      }, 100);
       // Clear state after scrolling
       navigate(location.pathname, { replace: true, state: {} });
     }

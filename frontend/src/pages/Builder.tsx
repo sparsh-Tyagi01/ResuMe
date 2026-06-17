@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useResume } from "../context/ResumeContext";
 import LayoutRenderer from "../components/templates/LayoutRenderer";
@@ -95,19 +95,26 @@ const Builder = () => {
     }
   }, [activeResume?.projects]);
 
+  const isCreatingRef = useRef(false);
+
   // Auto-creation of draft if navigated directly to /builder without an ID
   useEffect(() => {
     if (!id) {
+      if (isCreatingRef.current) return;
+      isCreatingRef.current = true;
       const initDraft = async () => {
         const savedTplId = localStorage.getItem("selectedTemplateId") || "jake-classic";
         localStorage.removeItem("selectedTemplateId");
         const doc = await createResume("My Resume Draft", savedTplId);
         if (doc && doc._id) {
           navigate(`/builder/${doc._id}`, { replace: true });
+        } else {
+          isCreatingRef.current = false;
         }
       };
       initDraft();
     } else {
+      isCreatingRef.current = false;
       loadResume(id);
     }
   }, [id, loadResume, createResume, navigate]);

@@ -14,9 +14,22 @@ export const Navbar = () => {
     if (location.pathname !== "/") {
       navigate("/", { state: { scrollTo: sectionId } });
     } else {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
+      const sectionIndexes: Record<string, number> = {
+        hero: 0,
+        templates: 1,
+        features: 2,
+        "how-it-works": 3,
+      };
+      if (sectionId in sectionIndexes) {
+        window.scrollTo({
+          top: sectionIndexes[sectionId] * window.innerHeight,
+          behavior: "smooth",
+        });
+      } else {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
       }
     }
   };

@@ -28,10 +28,10 @@ export const Navbar = () => {
         <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
           <svg className="w-6 h-6 text-black" viewBox="0 0 24 24" fill="currentColor">
             <rect x="4" y="4" width="4.5" height="16" rx="1.5" />
-            <rect x="10.5" y="4" width="10.5" height="4" rx="1.5" />
-            <rect x="10.5" y="10" width="7" height="4" rx="1.5" />
+            <path d="M8.5 4h6.5a4.5 4.5 0 0 1 4.5 4.5v0a4.5 4.5 0 0 1-4.5 4.5h-6.5V4z" />
+            <path d="M12.5 12h1.5l5 8h-3l-3.5-8z" />
           </svg>
-          <span className="text-xl font-bold text-slate-950 tracking-tight">Flowtica</span>
+          <span className="text-xl font-bold text-slate-950 tracking-tight">ResuMe</span>
         </Link>
 
         {/* Desktop Navigation Links */}

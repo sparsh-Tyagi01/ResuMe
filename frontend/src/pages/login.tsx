@@ -64,7 +64,7 @@ const Login = () => {
             Resume Builder & AI Assistant
           </div>
           <h1 className="text-3xl font-extrabold text-slate-950 tracking-tight">
-            Flowtica
+            ResuMe
           </h1>
           <p className="text-slate-500 text-sm mt-2">
             Log in to continue crafting your perfect resume.

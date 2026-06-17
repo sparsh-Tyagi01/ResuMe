@@ -92,8 +92,14 @@ button:focus-visible {
   footer, 
   aside,
   nav,
+  main,
   button {
     display: none !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
   }
 
   body, html {
@@ -101,22 +107,18 @@ button:focus-visible {
     color: black !important;
     margin: 0 !important;
     padding: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
-  .print-preview-canvas {
-    padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
-  }
-
-  .print-preview-canvas > div {
-    border: none !important;
-    box-shadow: none !important;
-    width: 100% !important;
-    max-width: 100% !important;
+  #root, 
+  div.h-screen, 
+  div.overflow-hidden,
+  div.flex {
     height: auto !important;
     min-height: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    position: relative !important;
   }
 }

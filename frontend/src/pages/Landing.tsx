@@ -12,7 +12,6 @@ import {
   MousePointerClick,
   Download,
   Layout,
-  Workflow,
   Search,
   Lock,
   ChevronRight,
@@ -70,7 +69,7 @@ const sampleData: resume = {
   projects: [
     {
       id: "p1",
-      name: "Collaborative LaTeX Editor",
+      name: "Collaborative Resume Editor",
       techStack: ["React", "WebSockets", "Go"],
       date: "2023",
       bullets: [
@@ -142,7 +141,7 @@ const Landing = () => {
   };
 
   const templatesList = [
-    { id: "jake-classic", name: "Jake's Classic LaTeX", desc: "Clean black-and-white serif layout, optimized for software and financial careers." },
+    { id: "jake-classic", name: "Jake's Classic", desc: "Clean black-and-white serif layout, optimized for software and financial careers." },
     { id: "modern-blue", name: "Modern Navy Sidebar", desc: "Striking left sidebar highlighting contact coordinates and skills category tags." },
     { id: "minimal-clean", name: "Minimal Single Column", desc: "Generous whitespace, thin dividers, and a modern custom-color layout." },
     { id: "elegant-two-column", name: "Elegant Split Grid", desc: "Visual two-column layout with serif headers, balancing detail densities." }
@@ -172,7 +171,7 @@ const Landing = () => {
               </h1>
               
               <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed max-w-lg">
-                Create LaTeX-grade resumes with live previewing, automated formatting, and integrated job tracking. No complex setups.
+                Create professional-grade resumes with live previewing, automated formatting, and AI text suggests. No complex setups.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -221,7 +220,7 @@ const Landing = () => {
             <motion.div
               animate={{ y: [-10, 10] }}
               transition={{ duration: 4, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: 1 }}
-              className="absolute left-[30%] bottom-0 w-[250px] border border-slate-200 shadow-2xl rounded-xl overflow-hidden bg-white p-3 z-20 origin-center"
+              className="absolute left-[30%] top-24 w-[250px] border border-slate-200 shadow-2xl rounded-xl overflow-hidden bg-white p-3 z-20 origin-center"
             >
               <div className="text-[4px] leading-tight select-none pointer-events-none opacity-90 scale-75 transform origin-top-left w-[300px]">
                 <LayoutRenderer templateId="minimal-clean" data={sampleData} />
@@ -410,13 +409,13 @@ const Landing = () => {
             {/* Feature 3 */}
             <div className="bg-slate-50/40 border-2 border-transparent hover:border-blue-500/30 rounded-3xl p-6 text-left flex flex-col items-start gap-4 transition-all duration-200 hover:shadow-xl hover:shadow-slate-100 cursor-default group">
               <div className="p-3 bg-violet-50 text-violet-600 rounded-2xl">
-                <Workflow size={20} />
+                <Layout size={20} />
               </div>
               <h3 className="text-base font-bold text-slate-950 group-hover:text-violet-600 transition-colors">
-                Kanban Application Board
+                Custom Color Accents
               </h3>
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                Track your active applications across Kanban columns: Applied, Interview, Offer, and Rejected.
+                Choose template designs and instantly customize theme accents with real-time vector PDF adjustments.
               </p>
             </div>
 
@@ -501,7 +500,7 @@ const Landing = () => {
             Ready to Build Your Resume?
           </h2>
           <p className="text-slate-600 font-medium max-w-lg mx-auto text-sm md:text-base leading-relaxed">
-            Register your profile for free and start tailoring your LaTeX resume layout for your next career move.
+            Register your profile for free and start tailoring your resume layout for your next career move.
           </p>
 
           <button

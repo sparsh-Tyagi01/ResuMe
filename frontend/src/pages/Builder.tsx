@@ -343,7 +343,7 @@ const Builder = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-slate-50 flex flex-col font-sans select-none overflow-hidden no-print">
+    <div className="w-full h-screen bg-slate-50 flex flex-col font-sans select-none overflow-hidden">
       {/* Mini Workspace Navbar */}
       <header className="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3">
@@ -370,7 +370,7 @@ const Builder = () => {
             onChange={(e) => updateResumeData({ templateId: e.target.value })}
             className="px-3 py-1.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white focus:outline-none"
           >
-            <option value="jake-classic">Jake's Classic LaTeX</option>
+            <option value="jake-classic">Jake's Classic</option>
             <option value="modern-blue">Modern Navy Sidebar</option>
             <option value="minimal-clean">Minimal Single Column</option>
             <option value="elegant-two-column">Elegant Split Grid</option>
@@ -898,7 +898,7 @@ const Builder = () => {
                           value={proj.name}
                           onChange={(e) => updateProject(idx, "name", e.target.value)}
                           className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-600 focus:bg-white focus:outline-none transition-all text-xs"
-                          placeholder="LaTeX Live Builder"
+                          placeholder="Resume Builder"
                         />
                       </div>
                       <div className="flex flex-col gap-1">
@@ -1209,7 +1209,7 @@ const Builder = () => {
         </aside>
 
         {/* Right Preview Panel (55%) */}
-        <main className="w-[55%] h-full bg-slate-200/50 p-6 flex flex-col items-center justify-start overflow-auto relative">
+        <main className="w-[55%] h-full bg-slate-200/50 p-6 flex flex-col items-center justify-start overflow-auto relative no-print">
           {/* Canvas Controls */}
           <div className="w-full max-w-[794px] flex items-center justify-between mb-4 bg-white/70 backdrop-blur-md px-4 py-2 border border-slate-200/50 rounded-xl shadow-xs sticky top-0 z-20">
             <span className="text-xs font-bold text-slate-500">Live Preview</span>

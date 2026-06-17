@@ -79,17 +79,3 @@ export interface resume {
   createdAt?: string;
   updatedAt?: string;
 }
-
-export interface job {
-  _id: string;
-  userId: string;
-  jobTitle: string;
-  company: string;
-  location: string;
-  jobLink: string;
-  status: "Applied" | "Interview" | "Offer" | "Rejected";
-  resumeId?: string | null;
-  note: string;
-  createdAt: string;
-  updatedAt: string;
-}

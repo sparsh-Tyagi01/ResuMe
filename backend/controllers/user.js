@@ -42,7 +42,7 @@ async function userRegister(req, res) {
     });
 
     await transporter.sendMail({
-      from: `"Smart Resume AI" <${process.env.EMAIL_USER}>`,
+      from: `"ResuMe" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
@@ -141,10 +141,10 @@ async function resendOtp(req, res) {
     await user.save();
 
     await transporter.sendMail({
-      from: `"Flowtica" <${process.env.EMAIL_USER}>`,
+      from: `"ResuMe" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Your Flowtica OTP Code",
-      text: `Your new Flowtica verification code is ${otp}. It will expire in 5 minutes.`,
+      subject: "Your ResuMe OTP Code",
+      text: `Your new ResuMe verification code is ${otp}. It will expire in 5 minutes.`,
     });
 
     return res.status(200).json({ message: "OTP resent successfully" });

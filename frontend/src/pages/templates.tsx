@@ -25,8 +25,8 @@ const Templates = () => {
   const templatesList: TemplateInfo[] = [
     {
       id: "jake-classic",
-      name: "Jake's Classic (LaTeX)",
-      description: "Standard academic and software engineering LaTeX layout with EB Garamond serif font and piping dividers.",
+      name: "Jake's Classic",
+      description: "Standard academic and software engineering layout with EB Garamond serif font and piping dividers.",
       category: "Academic",
       accentColor: "#1E293B",
       previewLayout: (
@@ -194,7 +194,7 @@ const Templates = () => {
             Choose Your Resume Template
           </h1>
           <p className="text-slate-500 text-sm mt-2.5 leading-relaxed">
-            Every preset is designed carefully with perfect margins, typography hierarchy, and matches industry standard LaTeX rendering. You can fully customize color accents later.
+            Every preset is designed carefully with perfect margins, typography hierarchy, and matches industry standard rendering. You can fully customize color accents later.
           </p>
         </div>
 

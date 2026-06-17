@@ -113,7 +113,7 @@ const VerifyOtp = () => {
           email: res.data.payload.email,
           role: res.data.payload.role,
         });
-        toast.success("Welcome to Flowtica!");
+        toast.success("Welcome to ResuMe!");
         navigate("/dashboard");
       }
     } catch (err: any) {

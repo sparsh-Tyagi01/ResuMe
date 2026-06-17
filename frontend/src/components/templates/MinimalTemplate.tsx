@@ -1,3 +1,4 @@
+import React from "react";
 import type { resume } from "../../types/models";
 
 interface Props {

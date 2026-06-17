@@ -61,7 +61,7 @@ const Login = () => {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/50 text-slate-600 text-xs font-semibold mb-4 pointer-events-none">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
-            Resume Builder & AI Assistant
+            Resume Builder & Template Editor
           </div>
           <h1 className="text-3xl font-extrabold text-slate-950 tracking-tight">
             ResuMe

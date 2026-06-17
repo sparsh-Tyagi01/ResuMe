@@ -65,7 +65,7 @@ const Register = () => {
             Create Account
           </h1>
           <p className="text-slate-500 text-sm mt-2">
-            Build professional-quality resumes with smart AI assistance.
+            Build professional-quality resumes with our live layout builder.
           </p>
         </div>
 

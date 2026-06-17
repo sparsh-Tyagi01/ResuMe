@@ -20,7 +20,6 @@ import {
   GraduationCap,
   Hammer,
   User,
-  Wand2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -31,7 +30,6 @@ const Builder = () => {
 
   const [activeSection, setActiveSection] = useState<string>("personal");
   const [zoom, setZoom] = useState<number>(0.75);
-  const [aiLoading, setAiLoading] = useState<boolean>(false);
 
   const [prevId, setPrevId] = useState<string | undefined>(undefined);
   const [skillsText, setSkillsText] = useState({
@@ -151,72 +149,7 @@ const Builder = () => {
     });
   };
 
-  // AI Generation Handlers
-  const handleGenerateSummary = async () => {
-    if (!activeResume.personalInfo.title) {
-      toast.error("Please add a Professional Title first to help the AI.");
-      return;
-    }
-    setAiLoading(true);
-    try {
-      const res = await axiosInstance.post("/ai/suggest", {
-        type: "summary",
-        name: activeResume.personalInfo.name,
-        title: activeResume.personalInfo.title,
-        skills: [
-          ...activeResume.skills.languages,
-          ...activeResume.skills.frameworks,
-          ...activeResume.skills.tools,
-        ],
-      });
-      if (res.status === 200 && res.data.text) {
-        updateResumeData({ summary: res.data.text });
-        toast.success("Summary generated!");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to generate AI summary.");
-    } finally {
-      setAiLoading(false);
-    }
-  };
 
-  const handleRefineBullet = async (sectionType: "experience" | "projects" | "leadership", index: number, bulletIdx: number, currentText: string) => {
-    if (!currentText) {
-      toast.error("Please enter some details first to refine.");
-      return;
-    }
-    setAiLoading(true);
-    try {
-      const res = await axiosInstance.post("/ai/suggest", {
-        type: "bullet",
-        title: activeResume.personalInfo.title || "Professional",
-        context: currentText,
-      });
-
-      if (res.status === 200 && res.data.text) {
-        if (sectionType === "experience") {
-          const list = [...activeResume.experience];
-          list[index].bullets[bulletIdx] = res.data.text;
-          updateResumeData({ experience: list });
-        } else if (sectionType === "projects") {
-          const list = [...activeResume.projects];
-          list[index].bullets[bulletIdx] = res.data.text;
-          updateResumeData({ projects: list });
-        } else if (sectionType === "leadership") {
-          const list = [...activeResume.leadership!];
-          list[index].bullets[bulletIdx] = res.data.text;
-          updateResumeData({ leadership: list });
-        }
-        toast.success("Bullet point refined!");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to refine bullet point.");
-    } finally {
-      setAiLoading(false);
-    }
-  };
 
   // Repeatable list builders
   const addExperience = () => {
@@ -522,24 +455,16 @@ const Builder = () => {
             </button>
             {activeSection === "summary" && (
               <div className="p-5 flex flex-col gap-3 text-left">
-                <div className="flex justify-between items-center mb-1">
+                <div className="flex flex-col gap-1">
                   <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Professional Summary</label>
-                  <button
-                    type="button"
-                    onClick={handleGenerateSummary}
-                    disabled={aiLoading}
-                    className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 cursor-pointer disabled:opacity-50"
-                  >
-                    <Wand2 size={12} /> {aiLoading ? "Generating..." : "AI Suggest"}
-                  </button>
+                  <textarea
+                    value={activeResume.summary || ""}
+                    onChange={(e) => updateResumeData({ summary: e.target.value })}
+                    rows={4}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-600 focus:bg-white focus:outline-none transition-all text-xs leading-relaxed"
+                    placeholder="Summarize your professional experience in 2-4 lines..."
+                  />
                 </div>
-                <textarea
-                  value={activeResume.summary || ""}
-                  onChange={(e) => updateResumeData({ summary: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-600 focus:bg-white focus:outline-none transition-all text-xs leading-relaxed"
-                  placeholder="Summarize your professional experience in 2-4 lines..."
-                />
               </div>
             )}
           </div>
@@ -652,15 +577,6 @@ const Builder = () => {
                               className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-600 focus:bg-white focus:outline-none transition-all text-xs"
                               placeholder="Describe your achievement..."
                             />
-                            <button
-                              type="button"
-                              onClick={() => handleRefineBullet("experience", idx, bulletIdx, bullet)}
-                              disabled={aiLoading}
-                              className="p-1.5 hover:bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-600 cursor-pointer disabled:opacity-50"
-                              title="Refine with Gemini AI"
-                            >
-                              <Wand2 size={13} />
-                            </button>
                             {exp.bullets.length > 1 && (
                               <button
                                 type="button"
@@ -965,15 +881,6 @@ const Builder = () => {
                               className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-600 focus:bg-white focus:outline-none transition-all text-xs"
                               placeholder="Describe project details..."
                             />
-                            <button
-                              type="button"
-                              onClick={() => handleRefineBullet("projects", idx, bulletIdx, bullet)}
-                              disabled={aiLoading}
-                              className="p-1.5 hover:bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-600 cursor-pointer disabled:opacity-50"
-                              title="Refine with Gemini AI"
-                            >
-                              <Wand2 size={13} />
-                            </button>
                             {proj.bullets.length > 1 && (
                               <button
                                 type="button"
@@ -1159,15 +1066,6 @@ const Builder = () => {
                               className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:border-indigo-600 focus:bg-white focus:outline-none transition-all text-xs"
                               placeholder="Describe activity details..."
                             />
-                            <button
-                              type="button"
-                              onClick={() => handleRefineBullet("leadership", idx, bulletIdx, bullet)}
-                              disabled={aiLoading}
-                              className="p-1.5 hover:bg-indigo-50 border border-indigo-100 rounded-lg text-indigo-600 cursor-pointer disabled:opacity-50"
-                              title="Refine with Gemini AI"
-                            >
-                              <Wand2 size={13} />
-                            </button>
                             {lead.bullets.length > 1 && (
                               <button
                                 type="button"

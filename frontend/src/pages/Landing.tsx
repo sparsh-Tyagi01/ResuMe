@@ -171,7 +171,7 @@ const Landing = () => {
               </h1>
               
               <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed max-w-lg">
-                Create professional-grade resumes with live previewing, automated formatting, and AI text suggests. No complex setups.
+                Create professional-grade resumes with live previewing, automated formatting, and beautiful pre-designed layouts. No complex setups.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -383,30 +383,27 @@ const Landing = () => {
             {/* Feature 1 */}
             <div className="bg-slate-50/40 border-2 border-transparent hover:border-blue-500/30 rounded-3xl p-6 text-left flex flex-col items-start gap-4 transition-all duration-200 hover:shadow-xl hover:shadow-slate-100 cursor-default group">
               <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                <Sparkles size={20} />
+                <MousePointerClick size={20} />
               </div>
               <h3 className="text-base font-bold text-slate-950 group-hover:text-blue-600 transition-colors">
-                Gemini 2.5 Flash Suggest
+                Interactive Form Editor
               </h3>
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                Generate tailored, professional resume summaries and refine bullet points using Gemini's latest API.
+                Input your work history, education, and credentials easily inside a structured editor designed for speed.
               </p>
             </div>
-
             {/* Feature 2 */}
             <div className="bg-slate-50/40 border-2 border-transparent hover:border-blue-500/30 rounded-3xl p-6 text-left flex flex-col items-start gap-4 transition-all duration-200 hover:shadow-xl hover:shadow-slate-100 cursor-default group">
               <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
                 <FileText size={20} />
               </div>
               <h3 className="text-base font-bold text-slate-950 group-hover:text-indigo-600 transition-colors">
-                Overleaf-Style Editing
+                Real-time Live Preview
               </h3>
               <p className="text-xs text-slate-500 font-medium leading-relaxed">
                 View your inputs dynamically formatted side-by-side with our real-time, responsive preview panels.
               </p>
-            </div>
-
-            {/* Feature 3 */}
+            </div>            {/* Feature 3 */}
             <div className="bg-slate-50/40 border-2 border-transparent hover:border-blue-500/30 rounded-3xl p-6 text-left flex flex-col items-start gap-4 transition-all duration-200 hover:shadow-xl hover:shadow-slate-100 cursor-default group">
               <div className="p-3 bg-violet-50 text-violet-600 rounded-2xl">
                 <Layout size={20} />

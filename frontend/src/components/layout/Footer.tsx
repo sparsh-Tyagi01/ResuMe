@@ -15,7 +15,7 @@ export const Footer = () => {
             <span className="text-xl font-bold text-slate-950 tracking-tight">ResuMe</span>
           </div>
           <p className="text-slate-500 text-xs leading-relaxed max-w-xs">
-            Build professional-quality resumes that actually get interviews. Real-time rendering, dynamic templates, and AI text refinement.
+            Build professional-quality resumes that actually get interviews. Real-time rendering, dynamic templates, and instant PDF downloads.
           </p>
         </div>
 

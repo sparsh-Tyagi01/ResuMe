@@ -1,7 +1,6 @@
 const { Resume } = require("../models/resume");
 const crypto = require("crypto");
 
-// Create new resume (POST /api/resume/create)
 async function createResume(req, res) {
   try {
     const userId = req.user.id;
@@ -27,7 +26,6 @@ async function createResume(req, res) {
   }
 }
 
-// Get all authenticated user's resumes (GET /api/resume/my)
 async function getMyResumes(req, res) {
   try {
     const userId = req.user.id;
@@ -39,7 +37,6 @@ async function getMyResumes(req, res) {
   }
 }
 
-// Get single resume by ID (GET /api/resume/:id)
 async function getResumeById(req, res) {
   try {
     const userId = req.user.id;
@@ -56,7 +53,6 @@ async function getResumeById(req, res) {
   }
 }
 
-// Update resume (PUT /api/resume/:id)
 async function updateResume(req, res) {
   try {
     const userId = req.user.id;
@@ -95,7 +91,6 @@ async function updateResume(req, res) {
   }
 }
 
-// Delete resume (DELETE /api/resume/:id)
 async function deleteResume(req, res) {
   try {
     const userId = req.user.id;
@@ -112,7 +107,6 @@ async function deleteResume(req, res) {
   }
 }
 
-// Duplicate resume (POST /api/resume/:id/duplicate)
 async function duplicateResume(req, res) {
   try {
     const userId = req.user.id;
@@ -138,7 +132,6 @@ async function duplicateResume(req, res) {
   }
 }
 
-// Share toggle (PUT /api/resume/:id/share)
 async function shareResume(req, res) {
   try {
     const userId = req.user.id;
@@ -169,7 +162,6 @@ async function shareResume(req, res) {
   }
 }
 
-// Get public shared resume (GET /api/resume/shared/:token)
 async function getSharedResume(req, res) {
   try {
     const data = await Resume.findOne({ shareToken: req.params.token, isPublic: true });

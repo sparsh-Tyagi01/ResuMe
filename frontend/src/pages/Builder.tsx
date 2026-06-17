@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useResume } from "../context/ResumeContext";
 import LayoutRenderer from "../components/templates/LayoutRenderer";
+import { axiosInstance } from "../lib/axios";
 import {
   Sparkles,
   ChevronDown,
@@ -27,6 +28,31 @@ const Builder = () => {
 
   const [activeSection, setActiveSection] = useState<string>("personal");
   const [zoom, setZoom] = useState<number>(0.75);
+
+  const [templates, setTemplates] = useState<Array<{ id: string; name: string }>>([
+    { id: "jake-classic", name: "Jake's Classic" },
+    { id: "modern-blue", name: "Modern Navy Sidebar" },
+    { id: "minimal-clean", name: "Minimal Single Column" },
+    { id: "elegant-two-column", name: "Elegant Split Grid" },
+  ]);
+
+  useEffect(() => {
+    axiosInstance.get("/template")
+      .then((res) => {
+        if (res.data && res.data.data) {
+          const list = res.data.data
+            .filter((t: any) => t && t.id)
+            .map((t: any) => ({
+              id: t.id,
+              name: t.name || "Unnamed Template",
+            }));
+          if (list.length > 0) {
+            setTemplates(list);
+          }
+        }
+      })
+      .catch((err) => console.error("Error loading templates in Builder:", err));
+  }, []);
 
   const [prevId, setPrevId] = useState<string | undefined>(undefined);
   const [skillsText, setSkillsText] = useState({
@@ -307,10 +333,11 @@ const Builder = () => {
             onChange={(e) => updateResumeData({ templateId: e.target.value })}
             className="px-3 py-1.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 bg-white focus:outline-none"
           >
-            <option value="jake-classic">Jake's Classic</option>
-            <option value="modern-blue">Modern Navy Sidebar</option>
-            <option value="minimal-clean">Minimal Single Column</option>
-            <option value="elegant-two-column">Elegant Split Grid</option>
+            {templates.map((tpl) => (
+              <option key={tpl.id} value={tpl.id}>
+                {tpl.name}
+              </option>
+            ))}
           </select>
 
           {/* Color Accent choice (only shows for templates that use it) */}

@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Menu, X } from "lucide-react";
 
 export const Navbar = () => {
-  const { token, logout } = useAuth();
+  const { token, user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -64,6 +64,14 @@ export const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {token ? (
             <>
+              {user?.role === "admin" && (
+                <Link
+                  to="/admin/templates"
+                  className="text-blue-600 hover:text-blue-700 font-bold text-xs px-4 py-2 rounded-full transition-colors"
+                >
+                  Admin Panel
+                </Link>
+              )}
               <Link
                 to="/dashboard"
                 className="text-slate-700 hover:text-slate-950 font-bold text-xs px-4 py-2 rounded-full transition-colors"
@@ -133,6 +141,15 @@ export const Navbar = () => {
           
           {token ? (
             <div className="flex flex-col gap-2 pt-2">
+              {user?.role === "admin" && (
+                <Link
+                  to="/admin/templates"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 border border-blue-200 text-blue-600 font-bold text-xs rounded-xl hover:bg-blue-50 transition-colors"
+                >
+                  Admin Panel
+                </Link>
+              )}
               <Link
                 to="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}

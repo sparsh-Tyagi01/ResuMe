@@ -7,6 +7,7 @@ import LayoutRenderer from "../components/templates/LayoutRenderer";
 import FlowArt, { FlowSection } from "../components/ui/story-scroll";
 import { CardStack } from "../components/ui/card-stack";
 import { useAuth } from "../context/AuthContext";
+import { axiosInstance } from "../lib/axios";
 import type { resume } from "../types/models";
 import {
   FileText,
@@ -125,12 +126,31 @@ const Landing = () => {
     }
   };
 
-  const templatesList = [
+  const [templatesList, setTemplatesList] = useState([
     { id: "jake-classic", name: "Jake's Classic", desc: "Clean black-and-white serif layout, optimized for software and financial careers." },
     { id: "modern-blue", name: "Modern Navy Sidebar", desc: "Striking left sidebar highlighting contact coordinates and skills category tags." },
     { id: "minimal-clean", name: "Minimal Single Column", desc: "Generous whitespace, thin dividers, and a modern custom-color layout." },
     { id: "elegant-two-column", name: "Elegant Split Grid", desc: "Visual two-column layout with serif headers, balancing detail densities." }
-  ];
+  ]);
+
+  useEffect(() => {
+    axiosInstance.get("/template")
+      .then((res) => {
+        if (res.data && res.data.data) {
+          const list = res.data.data
+            .filter((t: any) => t && t.id)
+            .map((t: any) => ({
+              id: t.id,
+              name: t.name || "Unnamed Template",
+              desc: t.description || "Dynamic template layout configuration.",
+            }));
+          if (list.length > 0) {
+            setTemplatesList(list);
+          }
+        }
+      })
+      .catch((err) => console.error("Error fetching templates for landing page:", err));
+  }, []);
 
   const templatesItems = templatesList.map(temp => ({
     id: temp.id,
@@ -222,7 +242,7 @@ const Landing = () => {
         <FlowSection id="templates" className="bg-[#0b0f19] text-white flex flex-col justify-between">
           <div className="flex justify-between items-center text-[10px] md:text-xs font-bold tracking-widest text-indigo-400 uppercase">
             <span>02 / TEMPLATES</span>
-            <span>4 PROFESSIONAL FORMATS</span>
+            <span>{templatesList.length} PROFESSIONAL FORMATS</span>
           </div>
 
           <div className="my-auto flex flex-col md:flex-row items-center justify-between gap-8 w-full max-w-6xl mx-auto py-4">
@@ -253,48 +273,51 @@ const Landing = () => {
                 cardWidth={cardWidth}
                 cardHeight={cardHeight}
                 showDots={true}
-                renderCard={(item, state) => (
-                  <div className="relative w-full h-full bg-slate-900 border-2 border-slate-800 rounded-xl p-4 flex flex-col justify-between overflow-hidden">
-                    <div className="relative flex-1 rounded-lg overflow-hidden bg-white border border-slate-800 mb-3 shadow-inner">
-                      <div className="absolute inset-0 scale-[0.22] origin-top-left p-3 w-[794px] h-[1123px] select-none pointer-events-none text-slate-900">
-                        <LayoutRenderer templateId={item.id.toString()} data={sampleData} />
+                renderCard={(item, state) => {
+                  if (!item || !item.id) return null;
+                  return (
+                    <div className="relative w-full h-full bg-slate-900 border-2 border-slate-800 rounded-xl p-4 flex flex-col justify-between overflow-hidden">
+                      <div className="relative flex-1 rounded-lg overflow-hidden bg-white border border-slate-800 mb-3 shadow-inner">
+                        <div className="absolute inset-0 scale-[0.22] origin-top-left p-3 w-[794px] h-[1123px] select-none pointer-events-none text-slate-900">
+                          <LayoutRenderer templateId={item.id.toString()} data={sampleData} />
+                        </div>
+                        
+                        {state.active && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-3">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelectTemplate(item.id.toString());
+                              }}
+                              className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 px-4 rounded-lg transition-colors cursor-pointer shadow-lg z-30"
+                            >
+                              Use Template
+                            </button>
+                          </div>
+                        )}
                       </div>
-                      
-                      {state.active && (
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center p-3">
+
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="text-left min-w-0">
+                          <h4 className="text-xs font-bold text-white mb-0.5 truncate">{item.title}</h4>
+                          <p className="text-[10px] text-slate-400 leading-snug line-clamp-1">{item.description}</p>
+                        </div>
+                        {state.active && (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleSelectTemplate(item.id.toString());
                             }}
-                            className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 px-4 rounded-lg transition-colors cursor-pointer shadow-lg z-30"
+                            className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors shrink-0 flex items-center gap-0.5 cursor-pointer border border-slate-700"
                           >
-                            Use Template
+                            Choose
+                            <ChevronRight size={10} />
                           </button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="text-left min-w-0">
-                        <h4 className="text-xs font-bold text-white mb-0.5 truncate">{item.title}</h4>
-                        <p className="text-[10px] text-slate-400 leading-snug line-clamp-1">{item.description}</p>
+                        )}
                       </div>
-                      {state.active && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSelectTemplate(item.id.toString());
-                          }}
-                          className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors shrink-0 flex items-center gap-0.5 cursor-pointer border border-slate-700"
-                        >
-                          Choose
-                          <ChevronRight size={10} />
-                        </button>
-                      )}
                     </div>
-                  </div>
-                )}
+                  );
+                }}
               />
             </div>
           </div>

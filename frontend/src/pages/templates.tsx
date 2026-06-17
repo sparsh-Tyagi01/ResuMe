@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { useResume } from "../context/ResumeContext";
 import { Check, ArrowRight, Sparkles, Compass } from "lucide-react";
+import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
@@ -11,10 +12,79 @@ interface TemplateInfo {
   id: string;
   name: string;
   description: string;
-  category: "Professional" | "Academic" | "Creative" | "Minimal";
+  category: "Professional" | "Academic" | "Creative" | "Minimal" | "Custom";
   accentColor: string;
   previewLayout: React.ReactNode;
 }
+
+const generateMiniPreview = (layoutType: string, primaryColor: string) => {
+  if (layoutType === "two-column-left" || layoutType === "two-column-right") {
+    const isLeft = layoutType === "two-column-left";
+    const sidebar = (
+      <div className="w-[30%] p-1.5 flex flex-col gap-1" style={{ backgroundColor: primaryColor }}>
+        <div className="w-3.5 h-3.5 rounded-full bg-white/20 mx-auto" />
+        <div className="h-0.5 bg-white/20 rounded w-2/3 mx-auto" />
+        <div className="h-[2px] bg-white/10 rounded w-1/2 mx-auto" />
+        <div className="mt-2 space-y-0.5">
+          <div className="h-[2px] bg-white/15 rounded w-full" />
+          <div className="h-[2px] bg-white/15 rounded w-4/5" />
+          <div className="h-[2px] bg-white/15 rounded w-3/4" />
+        </div>
+      </div>
+    );
+    const main = (
+      <div className="flex-1 p-2 flex flex-col gap-1 bg-white text-slate-800">
+        <div className="h-0.5 bg-slate-200 rounded w-1/3" />
+        <div className="space-y-0.5 mt-1">
+          <div className="h-[2px] bg-slate-100 rounded w-full" />
+          <div className="h-[2px] bg-slate-100 rounded w-full" />
+          <div className="h-[2px] bg-slate-100 rounded w-2/3" />
+        </div>
+        <div className="h-0.5 bg-slate-200 rounded w-1/4 mt-1" />
+        <div className="space-y-0.5">
+          <div className="h-[2px] bg-slate-100 rounded w-full" />
+          <div className="h-[2px] bg-slate-100 rounded w-3/4" />
+        </div>
+      </div>
+    );
+    return (
+      <div className="w-full h-full bg-slate-50 flex select-none text-[5px] leading-none">
+        {isLeft ? (
+          <>
+            {sidebar}
+            {main}
+          </>
+        ) : (
+          <>
+            {main}
+            {sidebar}
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // Single Column Mini Layout
+  return (
+    <div className="w-full h-full bg-white flex flex-col p-2.5 text-[5px] leading-none select-none">
+      <div className="text-center font-bold mb-0.5 h-1 rounded w-1/3 mx-auto" style={{ backgroundColor: primaryColor }} />
+      <div className="h-[2px] bg-slate-100 rounded w-1/2 mx-auto mb-1.5" />
+      <div className="w-full h-[0.5px] mb-1.5" style={{ backgroundColor: primaryColor }} />
+      
+      <div className="h-0.5 rounded w-1/4 mb-0.5" style={{ backgroundColor: primaryColor }} />
+      <div className="space-y-0.5 mb-1.5">
+        <div className="h-[2px] bg-slate-100 rounded w-full" />
+        <div className="h-[2px] bg-slate-100 rounded w-5/6" />
+      </div>
+      
+      <div className="h-0.5 rounded w-1/5 mb-0.5" style={{ backgroundColor: primaryColor }} />
+      <div className="space-y-0.5">
+        <div className="h-[2px] bg-slate-100 rounded w-full" />
+        <div className="h-[2px] bg-slate-100 rounded w-4/5" />
+      </div>
+    </div>
+  );
+};
 
 const Templates = () => {
   const navigate = useNavigate();
@@ -22,7 +92,7 @@ const Templates = () => {
   const [selectedId, setSelectedId] = useState<string>("jake-classic");
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
-  const templatesList: TemplateInfo[] = [
+  const defaultTemplates: TemplateInfo[] = [
     {
       id: "jake-classic",
       name: "Jake's Classic",
@@ -108,7 +178,7 @@ const Templates = () => {
             <span>2021 – Present</span>
           </div>
           <p className="text-slate-500 mb-2 text-left">• Designed advanced auto-layout controls used by 1M+ designers.</p>
-
+ 
           <div className="font-bold text-[7.5px] text-indigo-600 mb-1 border-t border-slate-100 pt-2 text-left">Education</div>
           <div className="flex justify-between font-bold">
             <span>UC Berkeley</span>
@@ -160,6 +230,39 @@ const Templates = () => {
       ),
     },
   ];
+
+  const [templatesList, setTemplatesList] = useState<TemplateInfo[]>(defaultTemplates);
+
+  useEffect(() => {
+    axiosInstance.get("/template")
+      .then((res) => {
+        if (res.data && res.data.data) {
+          const apiList = (res.data.data || []).filter((item: any) => item && item.id);
+          const merged = apiList.map((item: any) => {
+            // If it matches a builtin, find its default details
+            const matchedBuiltin = defaultTemplates.find((d) => d.id === item.id);
+            if (matchedBuiltin) {
+              return matchedBuiltin;
+            }
+            // Otherwise construct a dynamic template info
+            return {
+              id: item.id,
+              name: item.name || "Unnamed Template",
+              description: item.description || "Custom dynamic layout template.",
+              category: "Custom",
+              accentColor: item.primaryColor || "#1E293B",
+              previewLayout: generateMiniPreview(item.layoutType, item.primaryColor),
+            } as TemplateInfo;
+          });
+          if (merged.length > 0) {
+            setTemplatesList(merged);
+          }
+        }
+      })
+      .catch((err) => {
+        console.error("Templates: Error loading templates:", err);
+      });
+  }, []);
 
   const handleSelect = async () => {
     if (isCreating) return;

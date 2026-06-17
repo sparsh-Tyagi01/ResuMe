@@ -22,6 +22,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("role");
+  };
+
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     const savedUserId = localStorage.getItem("userId");
@@ -41,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             role: savedRole,
           });
         }
-      } catch (err) {
+      } catch {
         logout();
       }
     }
@@ -56,13 +64,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("role", userPayload.role);
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("role");
-  };
 
   return (
     <AuthContext.Provider value={{ user, token, loading, login, logout }}>

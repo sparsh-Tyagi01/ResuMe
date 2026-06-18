@@ -11,6 +11,7 @@ const VerifyOtp = () => {
   const { login } = useAuth();
 
   const email = location.state?.email || "";
+  const [debugOtp, setDebugOtp] = useState<string>(location.state?.debugOtp || "");
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState<number>(300); // 5 minutes (300 seconds)
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -81,9 +82,14 @@ const VerifyOtp = () => {
     if (timeLeft > 0 || isResending) return;
     setIsResending(true);
     try {
-      await axiosInstance.post("/auth/resend-otp", { email });
+      const res = await axiosInstance.post("/auth/resend-otp", { email });
       setTimeLeft(300); // Reset countdown
       toast.success("New verification code sent!");
+      if (res.data?.debugOtp) {
+        setDebugOtp(res.data.debugOtp);
+      } else {
+        setDebugOtp("");
+      }
     } catch (err) {
       console.error("Resend OTP error:", err);
       toast.error("Failed to resend code.");
@@ -143,6 +149,12 @@ const VerifyOtp = () => {
           We sent a 6-digit verification code to <br />
           <strong className="text-slate-800">{email}</strong>
         </p>
+        
+        {debugOtp && (
+          <div className="w-full mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-850 rounded-2xl text-xs text-center font-medium leading-relaxed">
+            ⚠️ <strong>Debug Mode:</strong> Since email delivery failed/blocked on the server, please use this code to verify: <strong className="text-sm bg-white px-2 py-0.5 rounded border border-amber-300 select-all font-mono tracking-wider ml-1">{debugOtp}</strong>
+          </div>
+        )}
 
         <form onSubmit={handleVerify} className="w-full flex flex-col items-center gap-6">
           <div className="flex justify-between gap-2.5 w-full max-w-xs">

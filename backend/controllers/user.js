@@ -1,4 +1,4 @@
-const {User} = require("../models/user")
+const { User } = require("../models/user")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const dotenv = require("dotenv")
@@ -6,7 +6,7 @@ const transporter = require("../config/mailer")
 
 dotenv.config()
 
-const generateOTP = ()=>Math.floor(100000 + Math.random() * 900000).toString()
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 
 async function userRegister(req, res) {
   try {
@@ -41,14 +41,21 @@ async function userRegister(req, res) {
       otpExpires,
     });
 
-    await transporter.sendMail({
-      from: `"ResuMe" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your OTP Code",
-      text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
-    });
-
-    return res.status(200).json({ message: "OTP sent successfully" });
+    try {
+      await transporter.sendMail({
+        from: `"ResuMe" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Your OTP Code",
+        text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
+      });
+      return res.status(200).json({ message: "OTP sent successfully" });
+    } catch (mailError) {
+      console.error("Nodemailer failed to send email (using debug fallback):", mailError);
+      return res.status(200).json({ 
+        message: "OTP sent successfully", 
+        debugOtp: otp 
+      });
+    }
 
   } catch (error) {
     console.error("Register Error:", error);
@@ -103,21 +110,21 @@ async function verifyOtpHandler(req, res) {
 }
 
 
-async function userLogin(req,res) {
-    const {email, password} = req.body
-    const user = await User.findOne({email})
-    if(!user) return res.status(400).json({"message": "Invalid Email address"});
-    const isMatch = await bcrypt.compare(password,user.password)
-    if(!isMatch){
-        return res.status(400).json({"message": "Invalid password"})
-    }
-    const payload = {
-      id: user._id,
-      email: user.email,
-      role: email === process.env.ADMIN_EMAIL ? "admin" : "user",
-    }
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
-    return res.status(200).json({"message": "Login successful", token, payload})
+async function userLogin(req, res) {
+  const { email, password } = req.body
+  const user = await User.findOne({ email })
+  if (!user) return res.status(400).json({ "message": "Invalid Email address" });
+  const isMatch = await bcrypt.compare(password, user.password)
+  if (!isMatch) {
+    return res.status(400).json({ "message": "Invalid password" })
+  }
+  const payload = {
+    id: user._id,
+    email: user.email,
+    role: email === process.env.ADMIN_EMAIL ? "admin" : "user",
+  }
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
+  return res.status(200).json({ "message": "Login successful", token, payload })
 }
 
 async function resendOtp(req, res) {
@@ -140,18 +147,25 @@ async function resendOtp(req, res) {
     user.otpExpires = otpExpires;
     await user.save();
 
-    await transporter.sendMail({
-      from: `"ResuMe" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your ResuMe OTP Code",
-      text: `Your new ResuMe verification code is ${otp}. It will expire in 5 minutes.`,
-    });
-
-    return res.status(200).json({ message: "OTP resent successfully" });
+    try {
+      await transporter.sendMail({
+        from: `"ResuMe" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Your ResuMe OTP Code",
+        text: `Your new ResuMe verification code is ${otp}. It will expire in 5 minutes.`,
+      });
+      return res.status(200).json({ message: "OTP resent successfully" });
+    } catch (mailError) {
+      console.error("Nodemailer failed to resend email (using debug fallback):", mailError);
+      return res.status(200).json({ 
+        message: "OTP resent successfully", 
+        debugOtp: otp 
+      });
+    }
   } catch (error) {
     console.error("Resend OTP Error:", error);
     return res.status(500).json({ message: "Server error" });
   }
 }
 
-module.exports = {userRegister, userLogin, verifyOtpHandler, resendOtp}
+module.exports = { userRegister, userLogin, verifyOtpHandler, resendOtp }

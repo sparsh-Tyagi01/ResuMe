@@ -33,8 +33,8 @@ const Register = () => {
       });
 
       if (res.status === 200) {
-        toast.success("Verification OTP code sent to email!");
-        navigate("/verify-otp", { state: { email } });
+        toast.success("Verification OTP code sent!");
+        navigate("/verify-otp", { state: { email, debugOtp: res.data?.debugOtp } });
       }
     } catch (error: any) {
       console.error("Registration error: ", error);

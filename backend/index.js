@@ -12,8 +12,21 @@ const app = express()
 
 connection(process.env.MONGO_URI)
 
+const allowedOrigins = process.env.BASE_URL ? [
+    process.env.BASE_URL.replace(/\/$/, "")
+] : [];
+
 app.use(cors({
-    origin: process.env.BASE_URL,
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        const normalizedOrigin = origin.replace(/\/$/, "");
+        if (allowedOrigins.includes(normalizedOrigin)) {
+            callback(null, true);
+        } else {
+            console.log(`CORS Blocked: Origin '${origin}' (normalized: '${normalizedOrigin}') is not in allowed list:`, allowedOrigins);
+            callback(null, false);
+        }
+    },
     methods: "POST, GET, PUT, DELETE",
     credentials: true
 }))

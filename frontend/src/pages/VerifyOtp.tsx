@@ -84,10 +84,15 @@ const VerifyOtp = () => {
     try {
       const res = await axiosInstance.post("/auth/resend-otp", { email });
       setTimeLeft(300); // Reset countdown
-      toast.success("New verification code sent!");
       if (res.data?.debugOtp) {
         setDebugOtp(res.data.debugOtp);
+        toast(() => (
+          <span className="text-xs">
+            ⚠️ <b>SMTP Blocked on Render:</b> Using debug OTP: <b>{res.data.debugOtp}</b>
+          </span>
+        ), { duration: 10000 });
       } else {
+        toast.success("New verification code sent!");
         setDebugOtp("");
       }
     } catch (err) {
@@ -151,8 +156,18 @@ const VerifyOtp = () => {
         </p>
         
         {debugOtp && (
-          <div className="w-full mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-850 rounded-2xl text-xs text-center font-medium leading-relaxed">
-            ⚠️ <strong>Debug Mode:</strong> Since email delivery failed/blocked on the server, please use this code to verify: <strong className="text-sm bg-white px-2 py-0.5 rounded border border-amber-300 select-all font-mono tracking-wider ml-1">{debugOtp}</strong>
+          <div className="w-full mb-6 p-4 bg-amber-50 border border-amber-200/80 text-amber-900 rounded-2xl text-xs text-left font-medium leading-relaxed shadow-sm">
+            <div className="flex items-start gap-2 mb-1">
+              <span className="text-base leading-none">⚠️</span>
+              <strong className="text-amber-950 text-[13px]">Server SMTP Ports Blocked (Render)</strong>
+            </div>
+            <p className="text-amber-800 text-[11px] mb-2.5">
+              Render restricts outgoing email ports by default. We bypassed this restriction for this demo so you can test registration.
+            </p>
+            <div className="flex items-center justify-between bg-white px-3 py-1.5 rounded-xl border border-amber-200/80">
+              <span className="text-amber-700 text-[11px]">Verification Code:</span>
+              <strong className="text-sm text-slate-900 font-mono tracking-widest select-all bg-slate-50 px-2.5 py-0.5 rounded border border-slate-200">{debugOtp}</strong>
+            </div>
           </div>
         )}
 

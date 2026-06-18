@@ -33,7 +33,15 @@ const Register = () => {
       });
 
       if (res.status === 200) {
-        toast.success("Verification OTP code sent!");
+        if (res.data?.debugOtp) {
+          toast(() => (
+            <span className="text-xs">
+              ⚠️ <b>SMTP Blocked on Render:</b> Using debug OTP: <b>{res.data.debugOtp}</b>
+            </span>
+          ), { duration: 10000 });
+        } else {
+          toast.success("Verification OTP code sent to email!");
+        }
         navigate("/verify-otp", { state: { email, debugOtp: res.data?.debugOtp } });
       }
     } catch (error: any) {

@@ -2,11 +2,8 @@ const { User } = require("../models/user")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const dotenv = require("dotenv")
-const transporter = require("../config/mailer")
 
 dotenv.config()
-
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 
 async function userRegister(req, res) {
   try {
@@ -26,70 +23,14 @@ async function userRegister(req, res) {
       return res.status(409).json({ message: "Phone already registered" });
     }
 
-    const otp = generateOTP();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
-
     const hashedPassword = await bcrypt.hash(password, 10);
-    const hashedOtp = await bcrypt.hash(otp, 10);
 
     const user = await User.create({
       name,
       email,
       phone,
       password: hashedPassword,
-      otp: hashedOtp,
-      otpExpires,
     });
-
-    try {
-      await transporter.sendMail({
-        from: `"ResuMe" <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: "Your OTP Code",
-        text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
-      });
-      return res.status(200).json({ 
-        message: "OTP sent successfully", 
-        mailSent: true 
-      });
-    } catch (mailError) {
-      console.error("Nodemailer failed to send email (using debug fallback):", mailError);
-      return res.status(200).json({ 
-        message: "OTP sent successfully", 
-        mailSent: false,
-        debugOtp: otp 
-      });
-    }
-
-  } catch (error) {
-    console.error("Register Error:", error);
-    return res.status(500).json({ message: "Server error" });
-  }
-}
-
-
-async function verifyOtpHandler(req, res) {
-  try {
-    const { email, otp } = req.body;
-
-    if (!email || !otp) {
-      return res.status(400).json({ message: "Email and OTP required" });
-    }
-
-    const user = await User.findOne({ email });
-
-    if (!user || !user.otp || user.otpExpires < new Date()) {
-      return res.status(400).json({ message: "Invalid or expired OTP" });
-    }
-
-    const isOtpValid = await bcrypt.compare(otp, user.otp);
-    if (!isOtpValid) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    user.otp = null;
-    user.otpExpires = null;
-    await user.save();
 
     const payload = {
       id: user._id,
@@ -108,11 +49,10 @@ async function verifyOtpHandler(req, res) {
     });
 
   } catch (error) {
-    console.error("OTP Verify Error:", error);
+    console.error("Register Error:", error);
     return res.status(500).json({ message: "Server error" });
   }
 }
-
 
 async function userLogin(req, res) {
   const { email, password } = req.body
@@ -131,49 +71,4 @@ async function userLogin(req, res) {
   return res.status(200).json({ "message": "Login successful", token, payload })
 }
 
-async function resendOtp(req, res) {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ message: "Email required" });
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const otp = generateOTP();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
-    const hashedOtp = await bcrypt.hash(otp, 10);
-
-    user.otp = hashedOtp;
-    user.otpExpires = otpExpires;
-    await user.save();
-
-    try {
-      await transporter.sendMail({
-        from: `"ResuMe" <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: "Your ResuMe OTP Code",
-        text: `Your new ResuMe verification code is ${otp}. It will expire in 5 minutes.`,
-      });
-      return res.status(200).json({ 
-        message: "OTP resent successfully", 
-        mailSent: true 
-      });
-    } catch (mailError) {
-      console.error("Nodemailer failed to resend email (using debug fallback):", mailError);
-      return res.status(200).json({ 
-        message: "OTP resent successfully", 
-        mailSent: false,
-        debugOtp: otp 
-      });
-    }
-  } catch (error) {
-    console.error("Resend OTP Error:", error);
-    return res.status(500).json({ message: "Server error" });
-  }
-}
-
-module.exports = { userRegister, userLogin, verifyOtpHandler, resendOtp }
+module.exports = { userRegister, userLogin }

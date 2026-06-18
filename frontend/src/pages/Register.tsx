@@ -4,9 +4,11 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { Mail, KeyRound, User, Phone, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -32,15 +34,14 @@ const Register = () => {
         password,
       });
 
-      if (res.status === 200) {
-        if (res.data?.mailSent) {
-          toast.success("Verification OTP code sent to email!");
-          sessionStorage.removeItem("debugOtp");
-        } else {
-          sessionStorage.setItem("debugOtp", res.data?.debugOtp || "");
-          toast.error("Email service port blocked. Using demo code.");
-        }
-        navigate("/verify-otp", { state: { email, debugOtp: res.data?.debugOtp } });
+      if (res.status === 200 && res.data.token) {
+        login(res.data.token, {
+          id: res.data.payload.id,
+          email: res.data.payload.email,
+          role: res.data.payload.role,
+        });
+        toast.success("Account created successfully!");
+        navigate("/dashboard");
       }
     } catch (error: any) {
       console.error("Registration error: ", error);

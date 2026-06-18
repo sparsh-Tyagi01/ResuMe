@@ -11,7 +11,9 @@ const VerifyOtp = () => {
   const { login } = useAuth();
 
   const email = location.state?.email || "";
-  const [debugOtp, setDebugOtp] = useState<string>(location.state?.debugOtp || "");
+  const [debugOtp, setDebugOtp] = useState<string>(() => {
+    return location.state?.debugOtp || sessionStorage.getItem("debugOtp") || "";
+  });
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [timeLeft, setTimeLeft] = useState<number>(300); // 5 minutes (300 seconds)
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -84,16 +86,14 @@ const VerifyOtp = () => {
     try {
       const res = await axiosInstance.post("/auth/resend-otp", { email });
       setTimeLeft(300); // Reset countdown
-      if (res.data?.debugOtp) {
-        setDebugOtp(res.data.debugOtp);
-        toast(() => (
-          <span className="text-xs">
-            ⚠️ <b>SMTP Blocked on Render:</b> Using debug OTP: <b>{res.data.debugOtp}</b>
-          </span>
-        ), { duration: 10000 });
-      } else {
+      if (res.data?.mailSent) {
         toast.success("New verification code sent!");
         setDebugOtp("");
+        sessionStorage.removeItem("debugOtp");
+      } else {
+        setDebugOtp(res.data?.debugOtp || "");
+        sessionStorage.setItem("debugOtp", res.data?.debugOtp || "");
+        toast.error("Email service port blocked. Using demo code.");
       }
     } catch (err) {
       console.error("Resend OTP error:", err);
@@ -119,6 +119,7 @@ const VerifyOtp = () => {
       });
 
       if (res.status === 200 && res.data.token) {
+        sessionStorage.removeItem("debugOtp");
         login(res.data.token, {
           id: res.data.payload.id,
           email: res.data.payload.email,

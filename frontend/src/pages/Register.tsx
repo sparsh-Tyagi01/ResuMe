@@ -33,14 +33,12 @@ const Register = () => {
       });
 
       if (res.status === 200) {
-        if (res.data?.debugOtp) {
-          toast(() => (
-            <span className="text-xs">
-              ⚠️ <b>SMTP Blocked on Render:</b> Using debug OTP: <b>{res.data.debugOtp}</b>
-            </span>
-          ), { duration: 10000 });
-        } else {
+        if (res.data?.mailSent) {
           toast.success("Verification OTP code sent to email!");
+          sessionStorage.removeItem("debugOtp");
+        } else {
+          sessionStorage.setItem("debugOtp", res.data?.debugOtp || "");
+          toast.error("Email service port blocked. Using demo code.");
         }
         navigate("/verify-otp", { state: { email, debugOtp: res.data?.debugOtp } });
       }

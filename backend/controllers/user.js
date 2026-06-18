@@ -48,11 +48,15 @@ async function userRegister(req, res) {
         subject: "Your OTP Code",
         text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
       });
-      return res.status(200).json({ message: "OTP sent successfully" });
+      return res.status(200).json({ 
+        message: "OTP sent successfully", 
+        mailSent: true 
+      });
     } catch (mailError) {
       console.error("Nodemailer failed to send email (using debug fallback):", mailError);
       return res.status(200).json({ 
         message: "OTP sent successfully", 
+        mailSent: false,
         debugOtp: otp 
       });
     }
@@ -154,11 +158,15 @@ async function resendOtp(req, res) {
         subject: "Your ResuMe OTP Code",
         text: `Your new ResuMe verification code is ${otp}. It will expire in 5 minutes.`,
       });
-      return res.status(200).json({ message: "OTP resent successfully" });
+      return res.status(200).json({ 
+        message: "OTP resent successfully", 
+        mailSent: true 
+      });
     } catch (mailError) {
       console.error("Nodemailer failed to resend email (using debug fallback):", mailError);
       return res.status(200).json({ 
         message: "OTP resent successfully", 
+        mailSent: false,
         debugOtp: otp 
       });
     }

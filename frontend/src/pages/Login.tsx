@@ -17,6 +17,7 @@ const Login = () => {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isLoading) return;
     if (!email || !password) {
       toast.error("Please fill in all fields.");
       return;

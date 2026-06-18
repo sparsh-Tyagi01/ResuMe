@@ -20,6 +20,7 @@ const Register = () => {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isLoading) return;
     if (!name || !email || !phone || !password) {
       toast.error("All fields are required.");
       return;
